@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/dashboardFragment"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home" />
+    <item
+        android:id="@+id/tipOutCalculatorFragment"
+        android:icon="@drawable/ic_tip_out_calculator"
+        android:title="@string/title_tip_out_calculator" />
+    <item
+        android:id="@+id/shiftLogFragment"
+        android:icon="@drawable/ic_event_note_black_24dp"
+        android:title="@string/title_shift_log" />
+</menu>
