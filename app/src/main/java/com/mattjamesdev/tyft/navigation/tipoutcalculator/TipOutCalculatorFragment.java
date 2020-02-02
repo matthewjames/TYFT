@@ -7,10 +7,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,81 +21,56 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.mattjamesdev.tyft.Database.Shift;
+import com.mattjamesdev.tyft.Database.ShiftViewModel;
 import com.mattjamesdev.tyft.R;
+import com.mattjamesdev.tyft.ShiftRecordEditorFragment;
 import com.mattjamesdev.tyft.SnackBarHelper;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TipOutCalculatorFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TipOutCalculatorFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class TipOutCalculatorFragment extends Fragment implements EditPositionDialog.EditPositionDialogListener {
+    private static final String TAG = "TipOutCalculatorFragmen";
+
     // components
-    private RecyclerView mPositionRecyclerView;
     private PositionAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<PositionItem> mPositionList;
     private Fragment hostFragment;
     private View root;
+    private ShiftViewModel shiftViewModel;
+    private OnFragmentInteractionListener mListener;
 
     // widgets
+    private RecyclerView mPositionRecyclerView;
     private TextView textViewQuickAdd,
-                     editTextGrossGratuity,
-                     textViewGrossGratuityAmount,
-                     textViewTotalTipOutAmount,
-                     textViewNetGratuityAmount;
+                        editTextGrossGratuity,
+                        textViewGrossGratuityAmount,
+                        textViewTotalTipOutAmount,
+                        textViewNetGratuityAmount;
     private Button buttonClear,
-                    buttonCalculate;
+                    buttonCalculate,
+                    buttonStartShiftRecord;
 
     // variables
     private PositionItem currentPositionItem;
     private boolean isQuickAdd = false;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+    private int grossGratuity = 0,
+                netGratuity = 0,
+                totalTipOut = 0;
 
     public TipOutCalculatorFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TipOutCalculatorFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TipOutCalculatorFragment newInstance(String param1, String param2) {
-        TipOutCalculatorFragment fragment = new TipOutCalculatorFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+        shiftViewModel = ViewModelProviders.of(requireActivity()).get(ShiftViewModel.class);
     }
 
     @Override
@@ -107,15 +85,15 @@ public class TipOutCalculatorFragment extends Fragment implements EditPositionDi
 
         hostFragment = this;
         createPositionList();
-        buildPositionRecyclerView(root);
-        setupButtons(root);
+        buildPositionRecyclerView();
+        setupButtons();
 
         return root;
     }
 
-    private void setupButtons(View v){
+    private void setupButtons(){
         // Quick add button
-        textViewQuickAdd = v.findViewById(R.id.textView_quickAdd);
+        textViewQuickAdd = root.findViewById(R.id.textView_quickAdd);
         textViewQuickAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,29 +106,34 @@ public class TipOutCalculatorFragment extends Fragment implements EditPositionDi
         });
 
         // Clear button
-        buttonClear = v.findViewById(R.id.buttonReset);
-        buttonClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editTextGrossGratuity.setText("");
-                calculate("");
-            }
+        buttonClear = root.findViewById(R.id.buttonReset);
+        buttonClear.setOnClickListener(v -> {
+            editTextGrossGratuity.setText("");
+            calculate("");
         });
 
         // Calculate button
-        buttonCalculate = v.findViewById(R.id.buttonCalculateTipOut);
-        buttonCalculate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calculate(editTextGrossGratuity.getText().toString());
+        buttonCalculate = root.findViewById(R.id.buttonCalculateTipOut);
+        buttonCalculate.setOnClickListener(v -> calculate(editTextGrossGratuity.getText().toString()));
+
+        // Start Shift Record button
+        buttonStartShiftRecord = root.findViewById(R.id.buttonStartShiftRecord);
+        buttonStartShiftRecord.setOnClickListener(v -> {
+            if (netGratuity != 0) {
+                Shift shift = new Shift(LocalDate.now(), netGratuity);
+                Log.d(TAG, "StartShiftRecord: Passing " + shift + " to ShiftViewModel");
+
+                shiftViewModel.setShift(shift);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.nav_host_fragment, ShiftRecordEditorFragment.newInstance()).addToBackStack(null).commit();
             }
         });
     }
 
     private void calculate(String grossGratuityInput){
-        if(!grossGratuityInput.equals("")) {
-            int totalTipOut = 0,
-                    grossGratuity = Integer.parseInt(grossGratuityInput);
+        if(!grossGratuityInput.equals("")) { // Gross gratuity is populated
+            grossGratuity = Integer.parseInt(grossGratuityInput);
 
             // Calculate individual tip outs
             for (PositionItem pi : mPositionList) {
@@ -161,15 +144,21 @@ public class TipOutCalculatorFragment extends Fragment implements EditPositionDi
 
             mAdapter.notifyDataSetChanged();
 
+            netGratuity = grossGratuity - totalTipOut;
+
             textViewGrossGratuityAmount.setText("$" + String.valueOf(grossGratuity) + " ");
             textViewTotalTipOutAmount.setText("-$" + String.valueOf(totalTipOut) + " ");
-            textViewNetGratuityAmount.setText("$" + String.valueOf(grossGratuity - totalTipOut) + " ");
-        } else {
+            textViewNetGratuityAmount.setText("$" + String.valueOf(netGratuity) + " ");
+        } else { // Gross gratuity is empty
             for (PositionItem pi : mPositionList) {
                 pi.setmTipOut(0);
             }
 
             mAdapter.notifyDataSetChanged();
+
+            grossGratuity = 0;
+            netGratuity = 0;
+            totalTipOut = 0;
 
             textViewGrossGratuityAmount.setText(R.string.tip_amount_placeholder);
             textViewTotalTipOutAmount.setText(R.string.tip_amount_placeholder);
@@ -190,7 +179,7 @@ public class TipOutCalculatorFragment extends Fragment implements EditPositionDi
         mPositionList.add(new PositionItem(5, "Salad", "Glen"));
     }
 
-    private void buildPositionRecyclerView(View root){
+    private void buildPositionRecyclerView(){
         mPositionRecyclerView = root.findViewById(R.id.recyclerView_positions);
         mLayoutManager = new LinearLayoutManager(root.getContext());
         mAdapter = new PositionAdapter(mPositionList);
@@ -250,13 +239,6 @@ public class TipOutCalculatorFragment extends Fragment implements EditPositionDi
             mAdapter.notifyDataSetChanged();
         }
     };
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {

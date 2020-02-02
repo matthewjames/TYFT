@@ -4,71 +4,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="4dp"
-    android:layout_margin="4dp">
+    android:layout_margin="4dp"
+    app:cardCornerRadius="4dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
 
         <TextView
             android:id="@+id/textView_tipPerc"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_gravity="center"
+            android:layout_weight="0.75"
             android:fontFamily="sans-serif-smallcaps"
             android:text="@string/tip_percent_placeholder"
             android:textColor="@color/colorThemeTipOutCalculator"
             android:textSize="22sp"
-            android:textStyle="bold|italic"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/textView_position"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_gravity="center"
+            android:layout_weight="1.5"
             android:fontFamily="sans-serif-smallcaps"
+            android:paddingStart="8dp"
             android:text="Position"
             android:textColor="@color/colorThemeTipOutCalculator"
             android:textSize="22sp"
-            android:textStyle="bold|italic"
-            app:layout_constraintBottom_toBottomOf="@+id/textView_tipPerc"
-            app:layout_constraintStart_toEndOf="@+id/textView_tipPerc"
-            app:layout_constraintTop_toTopOf="@+id/textView_tipPerc" />
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/textView_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_weight="1.75"
             android:fontFamily="sans-serif-smallcaps"
             android:text="(Name)"
             android:textColor="@color/colorThemeTipOutCalculator"
             android:textSize="18sp"
-            android:textStyle="bold|italic"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textView_position"
-            app:layout_constraintStart_toEndOf="@+id/textView_position" />
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/textView_tipOut"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
             android:fontFamily="sans-serif-smallcaps"
+            android:paddingEnd="8dp"
             android:text="@string/tip_amount_placeholder"
+            android:textAlignment="textEnd"
             android:textColor="@color/colorThemeTipOutCalculator"
             android:textSize="22sp"
-            android:textStyle="bold|italic"
-            app:layout_constraintBottom_toBottomOf="@+id/textView_tipPerc"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView_tipPerc" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:textStyle="bold|italic" />
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

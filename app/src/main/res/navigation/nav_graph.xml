@@ -17,14 +17,26 @@
         android:id="@+id/tipOutCalculatorFragment"
         android:name="com.mattjamesdev.tyft.navigation.tipoutcalculator.TipOutCalculatorFragment"
         android:label="fragment_tip_out_calculator"
-        tools:layout="@layout/fragment_tip_out_calculator" />
+        tools:layout="@layout/fragment_tip_out_calculator" >
+        <action
+            android:id="@+id/action_tipOutCalculatorFragment_to_shiftRecordEditorFragment"
+            app:destination="@+id/shiftRecordEditorFragment" />
+    </fragment>
     <fragment
         android:id="@+id/shiftLogFragment"
-        android:name="com.mattjamesdev.tyft.navigation.shiftlog.tipoutcalculator.ShiftLogFragment"
+        android:name="com.mattjamesdev.tyft.navigation.shiftlog.shiftlog.ShiftLogFragment"
         android:label="fragment_shift_log"
         tools:layout="@layout/fragment_shift_log" >
         <action
             android:id="@+id/action_shiftLogFragment_to_tipOutCalculatorFragment2"
             app:destination="@id/tipOutCalculatorFragment" />
+        <action
+            android:id="@+id/action_shiftLogFragment_to_shiftRecordEditorFragment"
+            app:destination="@id/shiftRecordEditorFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/shiftRecordEditorFragment"
+        android:name="com.mattjamesdev.tyft.ShiftRecordEditorFragment"
+        android:label="fragment_shift_record_editor"
+        tools:layout="@layout/fragment_shift_record_editor" />
 </navigation>

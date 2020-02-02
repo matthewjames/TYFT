@@ -12,27 +12,38 @@ public class Shift {
     @NonNull
     @PrimaryKey
     @ColumnInfo(name = "date")
-    private LocalDate mDate;
-    private int mTipAmount;
+    private LocalDate date;
+
+    @ColumnInfo(name = "tip_amt")
+    private int tipAmount;
 
     public Shift(@NonNull LocalDate date, int tipAmount){
-        this.mDate = date;
-        this.mTipAmount = tipAmount;
+        this.date = date;
+        this.tipAmount = tipAmount;
     }
 
-    public LocalDate getmDate() {
-        return mDate;
+    @NonNull
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setmDate(LocalDate mDate) {
-        this.mDate = mDate;
+    public void setDate(@NonNull LocalDate date) {
+        this.date = date;
     }
 
-    public int getmTipAmount() {
-        return mTipAmount;
+    public int getTipAmount() {
+        return tipAmount;
     }
 
-    public void setmTipAmount(int mTipAmount) {
-        this.mTipAmount = mTipAmount;
+    public void setTipAmount(int tipAmount) {
+        this.tipAmount = tipAmount;
+    }
+
+    @Override
+    public String toString() {
+        return "Shift{" +
+                "date=" + date +
+                ", tipAmount=" + tipAmount +
+                '}';
     }
 }

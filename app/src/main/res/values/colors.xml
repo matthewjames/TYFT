@@ -8,5 +8,7 @@
     <color name="colorSave">#4CAF50</color>
     <color name="colorThemeTipOutCalculator">#8F8F8F</color>
     <color name="colorThemeTipOutCalculatorYellow">#FFEA00</color>
-    <color name="colorThemeTipOutCalculatorWhite">#FBFFE8</color>
+    <color name="colorThemeTipOutCalculatorWhite">#FFFFFF</color>
+
+    <color name="colorIconBackground">#E9E9E9</color>
 </resources>

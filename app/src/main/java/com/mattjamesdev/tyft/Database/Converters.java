@@ -8,12 +8,13 @@ import java.time.ZoneId;
 
 public class Converters {
     @TypeConverter
-    public static LocalDate fromTimeStamp(Long timeStamp){
-        return timeStamp == null ? null : Instant.ofEpochMilli(timeStamp).atZone(ZoneId.systemDefault()).toLocalDate();
+    public static LocalDate toDate(String dateString){
+        return dateString == null ? null : LocalDate.parse(dateString);
     }
 
+
     @TypeConverter
-    public static Long dateToTimeStamp(LocalDate date){
-        return date == null ? null : date.atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
+    public static String toDateString(LocalDate date){
+        return date == null ? null : date.toString();
     }
 }
